@@ -8,7 +8,7 @@ from typing import Literal
 
 from dotenv import load_dotenv
 
-app = FastAPI()
+
 
 load_dotenv()  # lee virevo-backend/.env antes de importar el resto
 
@@ -39,6 +39,8 @@ from app.transcription import (  # noqa: E402
 )
 
 logger = logging.getLogger("virevo")
+
+app = FastAPI()
 
 MAX_UPLOAD_BYTES = 500 * 1024 * 1024  # 500 MB
 ALLOWED_EXTENSIONS = {".mp4", ".mov", ".mkv", ".webm", ".avi"}
