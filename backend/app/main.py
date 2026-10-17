@@ -251,13 +251,13 @@ def transcribir(session_id: str, body: TranscribeRequest, background_tasks: Back
     return _transcript_payload(store.get(session_id))
 
 
-@app.get("/sesiones/{session_id}/subtitulos")
+@app.get("api/sesiones/{session_id}/subtitulos")
 def subtitulos(session_id: str):
     _require_unlocked(session_id)
     return _transcript_payload(store.get(session_id))
 
 
-@app.put("/sesiones/{session_id}/subtitulos")
+@app.put("api/sesiones/{session_id}/subtitulos")
 def guardar_subtitulos(session_id: str, body: SaveRequest):
     session = _require_unlocked(session_id)
     cleaned = []
@@ -293,7 +293,7 @@ def _run_export(session_id: str, video_path: str, segments: list[dict]) -> None:
         store.fail_export(session_id, "No pudimos crear el video con subtítulos. Intenta de nuevo.")
 
 
-@app.post("/sesiones/{session_id}/exportar")
+@app.post("/api/sesiones/{session_id}/exportar")
 def exportar(session_id: str, background_tasks: BackgroundTasks):
     session = _require_unlocked(session_id)
     if session.transcript_status != "done" or not session.transcript_json:
@@ -306,13 +306,13 @@ def exportar(session_id: str, background_tasks: BackgroundTasks):
     return _export_payload(store.get(session_id))
 
 
-@app.get("/sesiones/{session_id}/exportacion")
+@app.get("/api/sesiones/{session_id}/exportacion")
 def estado_exportacion(session_id: str):
     _require_unlocked(session_id)
     return _export_payload(store.get(session_id))
 
 
-@app.get("/sesiones/{session_id}/descargar/video")
+@app.get("/api/sesiones/{session_id}/descargar/video")
 def descargar_video(session_id: str):
     session = _require_unlocked(session_id)
     if (session.export_status != "done" or not session.export_path
@@ -322,7 +322,7 @@ def descargar_video(session_id: str):
                         filename="video-con-subtitulos.mp4")
 
 
-@app.get("/sesiones/{session_id}/descargar/srt")
+@app.get("/api/sesiones/{session_id}/descargar/srt")
 def descargar_srt(session_id: str):
     session = _require_unlocked(session_id)
     if session.transcript_status != "done" or not session.transcript_json:
