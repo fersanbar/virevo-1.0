@@ -8,7 +8,7 @@ from typing import Literal
 
 from dotenv import load_dotenv
 
-from backend import app
+app = FastAPI()
 
 load_dotenv()  # lee virevo-backend/.env antes de importar el resto
 
@@ -134,7 +134,7 @@ def _require_unlocked(session_id: str) -> Session:
 
 # --- Módulo 1: analizar el video -------------------------------------------
 
-@app.post("/videos/analizar")
+@app.post("/api/videos/analizar")
 async def analizar_video(request: Request, file: UploadFile = File(...)):
     ext = os.path.splitext(file.filename or "")[1].lower()
     if ext not in ALLOWED_EXTENSIONS:
@@ -183,17 +183,17 @@ async def analizar_video(request: Request, file: UploadFile = File(...)):
 
 # --- Módulo 2: anuncios validados por el servidor ---------------------------
 
-@app.get("/sesiones/{session_id}")
+@app.get("/api/sesiones/{session_id}")
 def estado_sesion(session_id: str):
     return _state(store.get(session_id))
 
 
-@app.post("/sesiones/{session_id}/anuncios/iniciar")
+@app.post("/api/sesiones/{session_id}/anuncios/iniciar")
 def iniciar_anuncio(session_id: str):
     return _state(store.start_ad(session_id))
 
 
-@app.post("/sesiones/{session_id}/anuncios/completar")
+@app.post("/api/sesiones/{session_id}/anuncios/completar")
 def completar_anuncio(session_id: str):
     return _state(store.complete_ad(session_id))
 
