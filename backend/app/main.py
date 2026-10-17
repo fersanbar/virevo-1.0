@@ -8,11 +8,14 @@ from typing import Literal
 
 from dotenv import load_dotenv
 
+from backend import app
+
 load_dotenv()  # lee virevo-backend/.env antes de importar el resto
 
 from fastapi import BackgroundTasks, FastAPI, File, HTTPException, Request, UploadFile  # noqa: E402
 from fastapi.responses import FileResponse, JSONResponse, Response  # noqa: E402
 from pydantic import BaseModel, Field  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.ad_rules import MAX_FREE_SECONDS, calculate_ad_plan  # noqa: E402
 from app.audio import AudioExtractionError, extract_audio  # noqa: E402
@@ -48,11 +51,15 @@ store.fail_interrupted()
 PRODUCTION = (os.environ.get("VIREVO_ENV") or "").lower() == "production"
 
 # En producción se oculta la documentación interactiva (/docs): no hace falta que sea pública.
-app = FastAPI(
-    title="VIREVO API",
-    docs_url=None if PRODUCTION else "/docs",
-    redoc_url=None,
-    openapi_url=None if PRODUCTION else "/openapi.json",
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://virevo-v10.vercel.app",
+        "https://virevo-v10-89gfrwwp2-virevo2.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
