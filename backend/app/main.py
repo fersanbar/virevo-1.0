@@ -232,7 +232,7 @@ def _run_transcription(session_id: str, video_path: str, language: str | None,
         audio_path.unlink(missing_ok=True)
 
 
-@app.post("/sesiones/{session_id}/transcribir")
+@app.post("api/sesiones/{session_id}/transcribir")
 def transcribir(session_id: str, body: TranscribeRequest, background_tasks: BackgroundTasks,
                 request: Request):
     session = _require_unlocked(session_id)
