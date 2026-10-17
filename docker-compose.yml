@@ -1,0 +1,37 @@
+# Ajusta ./backend y ./frontend si tus carpetas se llaman distinto.
+services:
+  backend:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      VIREVO_DATA: /data
+      VIREVO_ENV: production
+      VIREVO_TRUST_PROXY: "1" # solo Caddy habla con el backend: no se publica ningún puerto suyo
+    volumes:
+      - virevo-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/salud')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    environment:
+      VIREVO_DOMAIN: ${VIREVO_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  virevo-data:
+  caddy-data:
+  caddy-config:

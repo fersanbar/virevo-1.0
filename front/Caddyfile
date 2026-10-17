@@ -1,0 +1,21 @@
+# VIREVO_DOMAIN: tu dominio (ej. app.midominio.com) -> Caddy consigue el HTTPS automáticamente.
+# Para probar en tu PC usa http://localhost
+{$VIREVO_DOMAIN:localhost} {
+	encode gzip
+
+	# Los videos pueden pesar hasta 500 MB
+	request_body {
+		max_size 520MB
+	}
+
+	handle /api/* {
+		uri strip_prefix /api
+		reverse_proxy backend:8000
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
