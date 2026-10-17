@@ -29,7 +29,7 @@ def burn_subtitles(video_path: str | Path, segments: list[dict], out_path: str |
             # los problemas de rutas con ":" y "\" de Windows dentro de los filtros de FFmpeg.
             "-vf", f"ass={ass_path.name}",
             "-map", "0:v:0", "-map", "0:a:0?",
-            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+            "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23", "-pix_fmt", "yuv420p",
             "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart",
             str(tmp_out),
         ]
