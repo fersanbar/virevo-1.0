@@ -57,8 +57,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://virevo-v10.vercel.app",
-        "https://virevo-v10-89gfrwwp2-virevo2.vercel.app",
     ],
+    allow_origin_regex=r"https://virevo-v10-[a-z0-9-]+-virevo2\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
