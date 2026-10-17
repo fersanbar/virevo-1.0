@@ -1,7 +1,10 @@
 """Incrusta los subtítulos en el video con FFmpeg (filtro 'ass', que usa libass)."""
+from asyncio.log import logger
 import os
 import subprocess
 from pathlib import Path
+import logging
+import time
 
 from app.media import VideoInvalidoError, get_video_size
 from app.subtitles import build_ass
@@ -16,6 +19,9 @@ def burn_subtitles(video_path: str | Path, segments: list[dict], out_path: str |
     out_path = Path(out_path).resolve()
     tmp_out = out_path.with_name(out_path.stem + ".part.mp4")  # no se sirve hasta que termine
     ass_path = video_path.with_suffix(".ass")
+    logger = logging.getLogger("virevo")
+    start_time = time.perf_counter()
+    logger.info("EXPORT: iniciando FFmpeg para %s", video_path.name)
 
     try:
         width, height = get_video_size(str(video_path))
@@ -31,6 +37,10 @@ def burn_subtitles(video_path: str | Path, segments: list[dict], out_path: str |
             str(tmp_out),
         ]
         subprocess.run(cmd, capture_output=True, timeout=1800, check=True, cwd=ass_path.parent)
+        logger.info(
+            "EXPORT: FFmpeg terminó en %.1f segundos",
+            time.perf_counter() - start_time,
+        )
         os.replace(tmp_out, out_path)
     except VideoInvalidoError as exc:
         raise ExportError(str(exc)) from exc
