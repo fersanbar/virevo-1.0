@@ -24,7 +24,7 @@ def burn_subtitles(video_path: str | Path, segments: list[dict], out_path: str |
         width, height = get_video_size(str(video_path))
         ass_path.write_text(build_ass(segments, width, height), encoding="utf-8")
         cmd = [
-            "ffmpeg", "-y", "-loglevel", "error", "-i", str(video_path),
+            "ffmpeg","-y", "-loglevel", "warning", "-stats", "-i", str(video_path),
             # Se usa el nombre sin ruta (y se ejecuta dentro de su carpeta) para evitar
             # los problemas de rutas con ":" y "\" de Windows dentro de los filtros de FFmpeg.
             "-vf", f"ass={ass_path.name}",
@@ -46,7 +46,16 @@ def burn_subtitles(video_path: str | Path, segments: list[dict], out_path: str |
             "EXPORT: FFmpeg terminó en %.1f segundos",
             time.perf_counter() - start_time,
         )
-        subprocess.run(cmd, capture_output=True, timeout=1800, check=True, cwd=ass_path.parent)
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=1800,
+            check=True,
+            cwd=ass_path.parent,
+        )
+        if result.stderr:
+            logger.warning("FFmpeg estadísticas:\n%s", result.stderr[-5000:])
         logger.info(
             "EXPORT: FFmpeg terminó en %.1f segundos",
             time.perf_counter() - start_time,
