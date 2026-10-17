@@ -1,0 +1,8 @@
+node_modules/
+front/node_modules/
+dist/
+front/dist/
+.env
+.env.*
+!.env.example
+.DS_Store
