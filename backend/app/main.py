@@ -233,7 +233,7 @@ def _run_transcription(session_id: str, video_path: str, language: str | None,
         audio_path.unlink(missing_ok=True)
 
 
-@app.post("api/sesiones/{session_id}/transcribir")
+@app.post("/api/sesiones/{session_id}/transcribir")
 def transcribir(session_id: str, body: TranscribeRequest, background_tasks: BackgroundTasks,
                 request: Request):
     session = _require_unlocked(session_id)
@@ -251,13 +251,13 @@ def transcribir(session_id: str, body: TranscribeRequest, background_tasks: Back
     return _transcript_payload(store.get(session_id))
 
 
-@app.get("api/sesiones/{session_id}/subtitulos")
+@app.get("/api/sesiones/{session_id}/subtitulos")
 def subtitulos(session_id: str):
     _require_unlocked(session_id)
     return _transcript_payload(store.get(session_id))
 
 
-@app.put("api/sesiones/{session_id}/subtitulos")
+@app.put("/api/sesiones/{session_id}/subtitulos")
 def guardar_subtitulos(session_id: str, body: SaveRequest):
     session = _require_unlocked(session_id)
     cleaned = []
